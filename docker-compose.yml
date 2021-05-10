@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  bouncer:
+    container_name: Bouncer
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: always
+    env_file:
+      - .env
