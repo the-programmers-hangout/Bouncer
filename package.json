@@ -1,0 +1,17 @@
+{
+  "name": "Bouncer",
+  "version": "1.0.0",
+  "description": "Invite detector bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+
+  },
+  "author": "moe",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^9.0.2"
+  }
+}
