@@ -24,11 +24,17 @@ client.on("message", async (message) => {
       await message.delete();
 
       const alertChannel = client.channels.cache.get(process.env.ALERT_CHAN_ID);
-      alertChannel.send(`
-        **<@${message.author.id}> sent an invite in <#${message.channel.id}>**\nMessage content:
-      `);
+      alertChannel
+        .send(`**<@${message.author.id}> sent an invite in <#${message.channel.id}>**\nMessage content:`);
 
       alertChannel.send(message.content);
+
+      try {
+        await message.author
+          .send(`Don't send invite links on The Programmer's Hangout. https://tenor.com/t42s.gif`)
+      } catch (exception) {
+        console.log(exception);
+      }
     }
 } 
 });
