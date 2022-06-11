@@ -27,7 +27,7 @@ client.on("message", async (message) => {
       alertChannel
         .send(`**<@${message.author.id}> sent an invite in <#${message.channel.id}>**\nMessage content:`);
 
-      alertChannel.send(message.content);
+      alertChannel.send(`\`\`\`${message.content}\`\`\``);
 
       try {
         await message.author
