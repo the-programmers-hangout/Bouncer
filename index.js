@@ -32,7 +32,7 @@ async function handlePotentialInvite(message) {
     content = content.replace(invite, "");
   });
 
-  if (message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
+  if (!message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
     if (regex.exec(content)) {
       await message.delete();
 
