@@ -1,42 +1,63 @@
-require('dotenv').config()
+require("dotenv").config();
+const {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  PermissionFlagsBits,
+} = require("discord.js");
 
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Client({
+  intents: Object.keys(GatewayIntentBits),
+  partials: Object.keys(Partials),
+});
 
-client.on('ready', () => {
+const regex =
+  /(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li|club)|discordapp\.com\/invite|discord\.com\/invite)\/.+[a-z]/gi;
+
+client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on("message", async (message) => {
-  if (message.author.bot) return;
-  const regex = /(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li|club)|discordapp\.com\/invite|discord\.com\/invite)\/.+[a-z]/gi;
+client.on("messageCreate", async (message) => {
+  handlePotentialInvite(message);
+});
 
-  const allowedInvites = process.env.INVITES.split(',');
+async function handlePotentialInvite(message) {
+  if (message.author.bot) return;
+
+  const allowedInvites = process.env.INVITES.split(",");
 
   let content = message.content;
   allowedInvites.forEach((invite) => {
-    content = content.replace(invite, '');
+    content = content.replace(invite, "");
   });
 
-
-  if (!message.member.hasPermission('MANAGE_GUILD')) { 
+  if (message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
     if (regex.exec(content)) {
       await message.delete();
 
       const alertChannel = client.channels.cache.get(process.env.ALERT_CHAN_ID);
-      alertChannel
-        .send(`**<@${message.author.id}> sent an invite in <#${message.channel.id}>**\nMessage content:`);
+      alertChannel.send(
+        `**<@${message.author.id}> sent an invite in <#${message.channel.id}>**\nMessage content:`
+      );
 
-      alertChannel.send(message.content);
+      alertChannel.send(escapeInvites(message.content));
 
       try {
-        await message.author
-          .send(`Don't send invite links on The Programmer's Hangout. https://tenor.com/t42s.gif`)
+        await message.author.send(
+          `Don't send invite links on The Programmer's Hangout.`
+        );
       } catch (exception) {
         console.log(exception);
       }
     }
-} 
-});
+  }
+}
+
+function escapeInvites(msg) {
+  return msg.replace(regex, (match) => {
+    return `<${match}>`;
+  });
+}
 
 client.login(process.env.TOKEN);
